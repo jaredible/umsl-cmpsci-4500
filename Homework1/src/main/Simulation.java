@@ -10,8 +10,8 @@ import java.util.Scanner;
 
 public class Simulation {
 	
-	public static final int DIM_MIN = 2;
-	public static final int DIM_MAX = 50;
+	public static final int DIMENSION_MIN = 2;
+	public static final int DIMENSION_MAX = 50;
 	public static final int MAX_UPDATES = 1000000;
 	
 	private final Random random = new Random();
@@ -75,7 +75,7 @@ public class Simulation {
 				scanner.next();
 			}
 			result = scanner.nextInt();
-		} while (!(result >= DIM_MIN && result <= DIM_MAX));
+		} while (!(result >= DIMENSION_MIN && result <= DIMENSION_MAX));
 		
 		return result;
 	}
@@ -83,8 +83,8 @@ public class Simulation {
 	public static void main(String[] args) {
 		String error = "Please enter an integer!";
 		Scanner scanner = new Scanner(System.in);
-		int a = prompt(scanner, String.format("Please enter an integer value for A [%d, %d]: ", DIM_MIN, DIM_MAX), error);
-		int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIM_MIN, DIM_MAX), error);
+		int a = prompt(scanner, String.format("Please enter an integer value for A [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
+		int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
 		scanner.close();
 		
 		Simulation simulation = new Simulation(a, b);
