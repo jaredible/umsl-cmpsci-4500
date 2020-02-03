@@ -1,0 +1,12 @@
+/bin/
+
+# Binaries
+*.class
+
+# Eclipse project files
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
