@@ -140,11 +140,6 @@ public class Simulation {
 			this.forest = forest;
 		}
 		
-		public void setLocation(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-		
 		public void tryMove(int motionX, int motionY) {
 			int x = this.x + motionX;
 			int y = this.y + motionY;
@@ -157,6 +152,11 @@ public class Simulation {
 		
 		public boolean with(Person person) {
 			return x == person.getX() && y == person.getY();
+		}
+		
+		public void setLocation(int x, int y) {
+			this.x = x;
+			this.y = y;
 		}
 		
 		public int getX() {
