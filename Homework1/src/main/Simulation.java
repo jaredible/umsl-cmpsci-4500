@@ -141,12 +141,12 @@ public class Simulation {
 		}
 		
 		public void tryMove(int motionX, int motionY) {
-			int x = this.x + motionX;
-			int y = this.y + motionY;
+			int newX = x + motionX;
+			int newY = y + motionY;
 			
-			if (forest.mayPass(x, y)) {
-				this.x += motionX;
-				this.y += motionY;
+			if (forest.mayPass(newX, newY)) {
+				x += motionX;
+				y += motionY;
 			}
 		}
 		
