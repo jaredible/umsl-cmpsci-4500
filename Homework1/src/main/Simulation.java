@@ -114,7 +114,7 @@ public class Simulation {
     for (int i = 0; i < numSimulations; i++) {
       simulation = new Simulation(a, b);
       simulation.start();
-      // System.out.println(simulation);
+      System.out.println(simulation);
       int numUpdates = simulation.getUpdates();
       if (numUpdates <= UPDATES_MAX) {
         sumUpdates += numUpdates;
@@ -125,8 +125,9 @@ public class Simulation {
         fastestUpdates = numUpdates;
       }
     }
+    System.out.flush();
     int averageUpdates = sumUpdates / numSimulations;
-    System.out.println(String.format("fastest: %d, average: %d, fails: %d", fastestUpdates, averageUpdates, numFails));
+    System.out.println(String.format("A: %d, B: %d, numSimulations: %d, fastest: %d, average: %d, fails: %d", a, b, numSimulations, fastestUpdates, averageUpdates, numFails));
   }
 
   private class Forest {
