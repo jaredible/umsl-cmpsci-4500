@@ -72,6 +72,14 @@ public class Simulation {
     updates++;
   }
 
+  public boolean isRunning() {
+    return running;
+  }
+
+  public int getUpdates() {
+    return updates;
+  }
+
   public String toString() {
     return String.format("[running: %b, updates: %d, forest: %s]", running, updates, forest);
   }
@@ -98,9 +106,27 @@ public class Simulation {
     int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
     scanner.close();
 
-    Simulation simulation = new Simulation(a, b);
-    simulation.start();
-    System.out.println(simulation);
+    int numSimulations = 10000;
+    int sumUpdates = 0;
+    int fastestUpdates = UPDATES_MAX;
+    int numFails = 0;
+    Simulation simulation;
+    for (int i = 0; i < numSimulations; i++) {
+      simulation = new Simulation(a, b);
+      simulation.start();
+      // System.out.println(simulation);
+      int numUpdates = simulation.getUpdates();
+      if (numUpdates <= UPDATES_MAX) {
+        sumUpdates += numUpdates;
+      } else {
+        numFails++;
+      }
+      if (numUpdates < fastestUpdates) {
+        fastestUpdates = numUpdates;
+      }
+    }
+    int averageUpdates = sumUpdates / numSimulations;
+    System.out.println(String.format("fastest: %d, average: %d, fails: %d", fastestUpdates, averageUpdates, numFails));
   }
 
   private class Forest {
