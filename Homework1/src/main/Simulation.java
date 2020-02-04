@@ -35,10 +35,11 @@ public class Simulation extends Canvas implements Runnable {
 
   public Simulation(int a, int b, long seed) {
     this.seed = seed;
+
     forest = new Forest(a, b);
 
-    forest.getPerson1().setLocation(0, 0);
-    forest.getPerson2().setLocation(a - 1, b - 1);
+    forest.getPerson1().setPosition(0, 0);
+    forest.getPerson2().setPosition(a - 1, b - 1);
 
     image = new BufferedImage(a, b, BufferedImage.TYPE_INT_RGB);
     pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -47,7 +48,7 @@ public class Simulation extends Canvas implements Runnable {
   public void start() {
     running = true;
 
-    new Thread(this).start();
+    new Thread(this, "Simulation").start();
   }
 
   public void stop() {
@@ -105,22 +106,26 @@ public class Simulation extends Canvas implements Runnable {
     int person2MotionX = 0;
     int person2MotionY = 0;
 
-    if (random.nextBoolean()) {
+    boolean moveHorizontally = random.nextBoolean();
+
+    if (moveHorizontally) {
       person1MotionX = random.nextInt(2 + 1) - 1;
     } else {
       person1MotionY = random.nextInt(2 + 1) - 1;
     }
 
-    if (random.nextBoolean()) {
+    moveHorizontally = random.nextBoolean();
+
+    if (moveHorizontally) {
       person2MotionX = random.nextInt(2 + 1) - 1;
     } else {
       person2MotionY = random.nextInt(2 + 1) - 1;
     }
 
-    forest.getPerson1().tryMove(person1MotionX, person1MotionY);
-    forest.getPerson2().tryMove(person2MotionX, person2MotionY);
+    forest.getPerson1().move(person1MotionX, person1MotionY);
+    forest.getPerson2().move(person2MotionX, person2MotionY);
 
-    boolean shouldStop = forest.getPerson1().with(forest.getPerson2()) || updates > UPDATES_MAX;
+    boolean shouldStop = forest.getPerson1().touching(forest.getPerson2()) || updates > UPDATES_MAX;
 
     if (shouldStop) {
       stop();
@@ -138,6 +143,11 @@ public class Simulation extends Canvas implements Runnable {
     for (int i = 0; i < pixels.length; i++) {
       pixels[i] = 0;
     }
+    
+    int p1xx = forest.getPerson1().getX() % forest.getWidth();
+    int p1yy = forest.getPerson1().getY() / forest.getHeight();
+    int p2xx = forest.getPerson2().getX() % forest.getWidth();
+    int p2yy = forest.getPerson2().getY() / forest.getHeight();
 
     pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0xff9bdc;
     pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
@@ -224,7 +234,7 @@ public class Simulation extends Canvas implements Runnable {
     }
 
     public boolean mayPass(int x, int y) {
-      return x >= 0 && y >= 0 && x < width && y < width;
+      return x >= 0 && y >= 0 && x < width && y < height;
     }
 
     public int getWidth() {
@@ -259,7 +269,7 @@ public class Simulation extends Canvas implements Runnable {
       this.forest = forest;
     }
 
-    public void tryMove(int motionX, int motionY) {
+    public void move(int motionX, int motionY) {
       if (motionX != 0 && motionY != 0)
         throw new IllegalArgumentException("Can only move along one axis at a time!");
 
@@ -272,11 +282,11 @@ public class Simulation extends Canvas implements Runnable {
       }
     }
 
-    public boolean with(Person person) {
+    public boolean touching(Person person) {
       return x == person.getX() && y == person.getY();
     }
 
-    public void setLocation(int x, int y) {
+    public void setPosition(int x, int y) {
       this.x = x;
       this.y = y;
     }
