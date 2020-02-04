@@ -172,7 +172,7 @@ public class Simulation extends Canvas implements Runnable {
   }
 
   public String toString() {
-    return String.format("[running: %b, updates: %d, seed: %d, forest: %s]", running, updates, seed, forest);
+    return String.format("Simulation(running: %b, updates: %d, seed: %d, forest: %s)", running, updates, seed, forest);
   }
 
   private static int prompt(Scanner scanner, String message, String error) {
@@ -253,7 +253,7 @@ public class Simulation extends Canvas implements Runnable {
     }
 
     public String toString() {
-      return String.format("[width: %d, height: %d, person1: %s, person2: %s]", width, height, person1, person2);
+      return String.format("Forest(width: %d, height: %d, person1: %s, person2: %s)", width, height, person1, person2);
     }
 
   }
@@ -299,7 +299,7 @@ public class Simulation extends Canvas implements Runnable {
     }
 
     public String toString() {
-      return String.format("[x: %d, y: %d]", x, y);
+      return String.format("Person(x: %d, y: %d)", x, y);
     }
 
   }
