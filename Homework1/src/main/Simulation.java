@@ -23,6 +23,7 @@ public class Simulation extends Canvas implements Runnable {
   public static final int DIMENSION_MAX = 50;
   public static final int UPDATES_MAX = 1000000;
 
+  private final long seed;
   private final Random random = new Random();
   private final Forest forest;
   private boolean running = false;
@@ -32,7 +33,8 @@ public class Simulation extends Canvas implements Runnable {
   private final BufferedImage image;
   private final int[] pixels;
 
-  public Simulation(int a, int b) {
+  public Simulation(int a, int b, long seed) {
+    this.seed = seed;
     forest = new Forest(a, b);
 
     forest.getPerson1().setLocation(0, 0);
@@ -52,7 +54,9 @@ public class Simulation extends Canvas implements Runnable {
     running = false;
   }
 
-  private void init() {}
+  private void init() {
+    random.setSeed(seed);
+  }
 
   public void run() {
     long lastTime = System.nanoTime();
@@ -159,7 +163,7 @@ public class Simulation extends Canvas implements Runnable {
   }
 
   public String toString() {
-    return String.format("[running: %b, updates: %d, forest: %s]", running, updates, forest);
+    return String.format("[running: %b, updates: %d, seed: %d, forest: %s]", running, updates, seed, forest);
   }
 
   private static int prompt(Scanner scanner, String message, String error) {
@@ -184,7 +188,7 @@ public class Simulation extends Canvas implements Runnable {
     int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
     scanner.close();
 
-    Simulation simulation = new Simulation(a, b);
+    Simulation simulation = new Simulation(a, b, System.currentTimeMillis());
     simulation.setMinimumSize(new Dimension(a * SCALE, b * SCALE));
     simulation.setMaximumSize(new Dimension(a * SCALE, b * SCALE));
     simulation.setPreferredSize(new Dimension(a * SCALE, b * SCALE));
@@ -199,6 +203,12 @@ public class Simulation extends Canvas implements Runnable {
     frame.setVisible(true);
 
     simulation.start();
+
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        System.out.println(simulation);
+      }
+    });
   }
 
   private class Forest {
