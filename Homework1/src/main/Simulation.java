@@ -143,11 +143,6 @@ public class Simulation extends Canvas implements Runnable {
     for (int i = 0; i < pixels.length; i++) {
       pixels[i] = 0;
     }
-    
-    int p1xx = forest.getPerson1().getX() % forest.getWidth();
-    int p1yy = forest.getPerson1().getY() / forest.getHeight();
-    int p2xx = forest.getPerson2().getX() % forest.getWidth();
-    int p2yy = forest.getPerson2().getY() / forest.getHeight();
 
     pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0xff9bdc;
     pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
