@@ -140,7 +140,6 @@ public class Simulation extends Canvas implements Runnable {
     pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
 
     Graphics g = bs.getDrawGraphics();
-    g.setColor(Color.BLUE);
     g.fillRect(0, 0, getWidth(), getHeight());
 
     int ww = forest.getWidth() * SCALE;
