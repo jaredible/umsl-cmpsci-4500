@@ -42,6 +42,8 @@ public class Simulation {
   }
 
   private void update() {
+    updates++;
+
     int person1MotionX = 0;
     int person1MotionY = 0;
     int person2MotionX = 0;
@@ -66,10 +68,7 @@ public class Simulation {
 
     if (shouldStop) {
       stop();
-      return;
     }
-
-    updates++;
   }
 
   public boolean isRunning() {
