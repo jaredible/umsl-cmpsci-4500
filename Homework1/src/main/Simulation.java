@@ -4,10 +4,21 @@
 
 package main;
 
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JFrame;
 
-public class Simulation {
+public class Simulation extends Canvas implements Runnable {
+
+  private static final long serialVersionUID = 1L;
 
   public static final int DIMENSION_MIN = 2;
   public static final int DIMENSION_MAX = 50;
@@ -18,26 +29,68 @@ public class Simulation {
   private boolean running = false;
   private int updates = 0;
 
+  private static final int SCALE = 10;
+  private final BufferedImage image;
+  private final int[] pixels;
+
   public Simulation(int a, int b) {
     forest = new Forest(a, b);
 
     forest.getPerson1().setLocation(0, 0);
     forest.getPerson2().setLocation(a - 1, b - 1);
+
+    image = new BufferedImage(a, b, BufferedImage.TYPE_INT_RGB);
+    pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
   }
 
   public void start() {
     running = true;
 
-    run();
+    new Thread(this).start();
   }
 
   public void stop() {
     running = false;
   }
 
-  private void run() {
+  private void init() {}
+
+  public void run() {
+    long lastTime = System.nanoTime();
+    double unprocessed = 0;
+    double nsPerUpdate = 1000000000.0 / 60;
+    int updates = 0;
+    int frames = 0;
+    long lastTimer = System.currentTimeMillis();
+
+    init();
+
     while (running) {
-      update();
+      long now = System.nanoTime();
+      unprocessed += (now - lastTime) / nsPerUpdate;
+      lastTime = now;
+
+      while (unprocessed >= 1) {
+        updates++;
+        update();
+        unprocessed--;
+      }
+
+      try {
+        Thread.sleep(2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      frames++;
+      draw();
+
+      if (System.currentTimeMillis() - lastTimer > 1000) {
+        lastTimer -= 1000;
+        System.out.println(String.format("updates: %d, frames: %d", updates, frames));
+        updates = 0;
+        frames = 0;
+      }
     }
   }
 
@@ -69,6 +122,34 @@ public class Simulation {
     if (shouldStop) {
       stop();
     }
+  }
+
+  private void draw() {
+    BufferStrategy bs = getBufferStrategy();
+    if (bs == null) {
+      createBufferStrategy(3);
+      requestFocus();
+      return;
+    }
+
+    for (int i = 0; i < pixels.length; i++) {
+      pixels[i] = 0;
+    }
+
+    pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0xff9bdc;
+    pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
+
+    Graphics g = bs.getDrawGraphics();
+    g.setColor(Color.BLUE);
+    g.fillRect(0, 0, getWidth(), getHeight());
+
+    int ww = forest.getWidth() * SCALE;
+    int hh = forest.getHeight() * SCALE;
+    int xo = (getWidth() - ww) / 2;
+    int yo = (getHeight() - hh) / 2;
+    g.drawImage(image, xo, yo, ww, hh, null);
+    g.dispose();
+    bs.show();
   }
 
   public boolean isRunning() {
@@ -105,28 +186,21 @@ public class Simulation {
     int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
     scanner.close();
 
-    int numSimulations = 10000;
-    int sumUpdates = 0;
-    int fastestUpdates = UPDATES_MAX;
-    int numFails = 0;
-    Simulation simulation;
-    for (int i = 0; i < numSimulations; i++) {
-      simulation = new Simulation(a, b);
-      simulation.start();
-      System.out.println(simulation);
-      int numUpdates = simulation.getUpdates();
-      if (numUpdates <= UPDATES_MAX) {
-        sumUpdates += numUpdates;
-      } else {
-        numFails++;
-      }
-      if (numUpdates < fastestUpdates) {
-        fastestUpdates = numUpdates;
-      }
-    }
-    System.out.flush();
-    int averageUpdates = sumUpdates / numSimulations;
-    System.out.println(String.format("A: %d, B: %d, numSimulations: %d, fastest: %d, average: %d, fails: %d", a, b, numSimulations, fastestUpdates, averageUpdates, numFails));
+    Simulation simulation = new Simulation(a, b);
+    simulation.setMinimumSize(new Dimension(a * SCALE, b * SCALE));
+    simulation.setMaximumSize(new Dimension(a * SCALE, b * SCALE));
+    simulation.setPreferredSize(new Dimension(a * SCALE, b * SCALE));
+
+    JFrame frame = new JFrame(String.format("Simulation [%d, %d]", a, b));
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setLayout(new BorderLayout());
+    frame.add(simulation, BorderLayout.CENTER);
+    frame.pack();
+    frame.setResizable(false);
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+
+    simulation.start();
   }
 
   private class Forest {
