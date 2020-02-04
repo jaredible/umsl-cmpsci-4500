@@ -94,10 +94,8 @@ public class Simulation {
   public static void main(String[] args) {
     String error = "Please enter an integer!";
     Scanner scanner = new Scanner(System.in);
-    int a = prompt(scanner, String.format("Please enter an integer value for A [%d, %d]: ",
-        DIMENSION_MIN, DIMENSION_MAX), error);
-    int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ",
-        DIMENSION_MIN, DIMENSION_MAX), error);
+    int a = prompt(scanner, String.format("Please enter an integer value for A [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
+    int b = prompt(scanner, String.format("Please enter an integer value for B [%d, %d]: ", DIMENSION_MIN, DIMENSION_MAX), error);
     scanner.close();
 
     Simulation simulation = new Simulation(a, b);
@@ -138,8 +136,7 @@ public class Simulation {
     }
 
     public String toString() {
-      return String.format("[width: %d, height: %d, person1: %s, person2: %s]", width, height,
-          person1, person2);
+      return String.format("[width: %d, height: %d, person1: %s, person2: %s]", width, height, person1, person2);
     }
 
   }
