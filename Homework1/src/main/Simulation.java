@@ -63,9 +63,6 @@ public class Simulation extends Canvas implements Runnable {
     long lastTime = System.nanoTime();
     double unprocessed = 0;
     double nsPerUpdate = 1000000000.0 / 60;
-    int updates = 0;
-    int frames = 0;
-    long lastTimer = System.currentTimeMillis();
 
     init();
 
@@ -75,7 +72,6 @@ public class Simulation extends Canvas implements Runnable {
       lastTime = now;
 
       while (unprocessed >= 1) {
-        updates++;
         update();
         unprocessed--;
       }
@@ -86,14 +82,12 @@ public class Simulation extends Canvas implements Runnable {
         e.printStackTrace();
       }
 
-      frames++;
       draw();
 
-      if (System.currentTimeMillis() - lastTimer > 1000) {
-        lastTimer -= 1000;
-        System.out.println(String.format("updates: %d, frames: %d", updates, frames));
-        updates = 0;
-        frames = 0;
+      boolean hasStopped = !running;
+
+      if (hasStopped) {
+        draw();
       }
     }
   }
@@ -144,8 +138,14 @@ public class Simulation extends Canvas implements Runnable {
       pixels[i] = 0;
     }
 
-    pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0xff9bdc;
-    pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
+    boolean touching = forest.getPerson1().touching(forest.getPerson2());
+
+    if (touching) {
+      pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0x00ff37;
+    } else {
+      pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0xff9bdc;
+      pixels[forest.getPerson2().getX() + forest.getPerson2().getY() * forest.getWidth()] = 0x009bff;
+    }
 
     Graphics g = bs.getDrawGraphics();
     g.fillRect(0, 0, getWidth(), getHeight());
