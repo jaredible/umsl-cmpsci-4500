@@ -2,7 +2,7 @@
  * Copyright (c) 2020 Jared Diehl. All rights reserved.
  *******************************************************************************/
 
-package main;
+package edu.umsl.cs.simulation;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
