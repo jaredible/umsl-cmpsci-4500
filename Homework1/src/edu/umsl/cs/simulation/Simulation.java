@@ -103,18 +103,16 @@ public class Simulation extends Canvas implements Runnable {
     int person1MotionY = 0;
     int person2MotionX = 0;
     int person2MotionY = 0;
+    boolean person1MoveHorizontally = random.nextBoolean();
+    boolean person2MoveHorizontally = random.nextBoolean();
 
-    boolean moveHorizontally = random.nextBoolean();
-
-    if (moveHorizontally) {
+    if (person1MoveHorizontally) {
       person1MotionX = random.nextInt(2 + 1) - 1;
     } else {
       person1MotionY = random.nextInt(2 + 1) - 1;
     }
 
-    moveHorizontally = random.nextBoolean();
-
-    if (moveHorizontally) {
+    if (person2MoveHorizontally) {
       person2MotionX = random.nextInt(2 + 1) - 1;
     } else {
       person2MotionY = random.nextInt(2 + 1) - 1;
@@ -123,7 +121,7 @@ public class Simulation extends Canvas implements Runnable {
     forest.getPerson1().move(person1MotionX, person1MotionY);
     forest.getPerson2().move(person2MotionX, person2MotionY);
 
-    boolean shouldStop = forest.getPerson1().touching(forest.getPerson2()) || updates > UPDATES_MAX;
+    boolean shouldStop = forest.getPerson1().isTouching(forest.getPerson2()) || updates > UPDATES_MAX;
 
     if (shouldStop) {
       stop();
@@ -142,7 +140,7 @@ public class Simulation extends Canvas implements Runnable {
       pixels[i] = 0;
     }
 
-    boolean touching = forest.getPerson1().touching(forest.getPerson2());
+    boolean touching = forest.getPerson1().isTouching(forest.getPerson2());
 
     if (touching) {
       pixels[forest.getPerson1().getX() + forest.getPerson1().getY() * forest.getWidth()] = 0x00ff37;
@@ -239,7 +237,7 @@ public class Simulation extends Canvas implements Runnable {
       this.height = height;
     }
 
-    public boolean mayPass(int x, int y) {
+    public boolean isPassable(int x, int y) {
       return x >= 0 && y >= 0 && x < width && y < height;
     }
 
@@ -282,13 +280,13 @@ public class Simulation extends Canvas implements Runnable {
       int newX = x + motionX;
       int newY = y + motionY;
 
-      if (forest.mayPass(newX, newY)) {
+      if (forest.isPassable(newX, newY)) {
         x += motionX;
         y += motionY;
       }
     }
 
-    public boolean touching(Person person) {
+    public boolean isTouching(Person person) {
       return x == person.getX() && y == person.getY();
     }
 
