@@ -70,12 +70,12 @@ public class Simulation extends Canvas implements Runnable {
       long now = System.nanoTime();
       unprocessed += (now - lastTime) / nsPerUpdate;
       lastTime = now;
-      boolean shouldRender = false;
+      boolean shouldDraw = false;
 
       while (unprocessed >= 1) {
         update();
         unprocessed--;
-        shouldRender = true;
+        shouldDraw = true;
       }
 
       try {
@@ -84,7 +84,7 @@ public class Simulation extends Canvas implements Runnable {
         e.printStackTrace();
       }
 
-      if (shouldRender) {
+      if (shouldDraw) {
         draw();
       }
 
