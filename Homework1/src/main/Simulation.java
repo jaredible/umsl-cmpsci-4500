@@ -163,6 +163,10 @@ public class Simulation extends Canvas implements Runnable {
     bs.show();
   }
 
+  public Forest getForest() {
+    return forest;
+  }
+
   public boolean isRunning() {
     return running;
   }
@@ -172,7 +176,7 @@ public class Simulation extends Canvas implements Runnable {
   }
 
   public String toString() {
-    return String.format("Simulation(running: %b, updates: %d, seed: %d, forest: %s)", running, updates, seed, forest);
+    return String.format("Simulation(seed: %d, running: %b, updates: %d)", seed, running, updates);
   }
 
   private static int prompt(Scanner scanner, String message, String error) {
@@ -216,6 +220,9 @@ public class Simulation extends Canvas implements Runnable {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
         System.out.println(simulation);
+        System.out.println(simulation.getForest());
+        System.out.println(simulation.getForest().getPerson1());
+        System.out.println(simulation.getForest().getPerson2());
       }
     });
   }
@@ -253,7 +260,7 @@ public class Simulation extends Canvas implements Runnable {
     }
 
     public String toString() {
-      return String.format("Forest(width: %d, height: %d, person1: %s, person2: %s)", width, height, person1, person2);
+      return String.format("Forest(width: %d, height: %d)", width, height);
     }
 
   }
